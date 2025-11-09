@@ -1,0 +1,81 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-header {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+}
+
+.App-header h1 {
+  color: #667eea;
+  font-size: 48px;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.App-header p {
+  color: #666;
+  font-size: 18px;
+  margin: 0 0 30px 0;
+}
+
+.status-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+}
+
+.status-box h2 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+}
+
+.status-text {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.api-info {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+  text-align: left;
+}
+
+.api-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.info-box {
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.info-box h3 {
+  margin: 0 0 15px 0;
+  color: #667eea;
+}
+
+.info-box p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+}
