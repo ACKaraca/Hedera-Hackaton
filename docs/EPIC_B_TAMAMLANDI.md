@@ -131,11 +131,13 @@ backend/
 ```env
 MY_ACCOUNT_ID="0.0.7221982"
 MY_PRIVATE_KEY="e5db195ae1ba131a102416d3a46cbc92c5fbd209d42016bf94e26d41ef1b4f09"
+PRIVATE_KEY_DER="3030020100300706052b8104000a04220420e5db195ae1ba131a102416d3a46cbc92c5fbd209d42016bf94e26d41ef1b4f09"
+PUBLIC_KEY_DER="302d300706052b8104000a032200028bc6923e231b815e1c47532da4bf71599b78375c471034e0561029f806ab5149"
 HEDERA_NETWORK="testnet"
 PORT=3001
 
-# Oluşturulacak ID'ler (test sonrası eklenecek)
-HCS_TOPIC_ID=""
+# Güncel ID'ler
+HCS_TOPIC_ID="0.0.7225007"
 MESH_TOKEN_ID=""
 ```
 
@@ -247,18 +249,21 @@ curl http://localhost:3001/api/token/info
 
 ## ⚠️ Bilinen Sorunlar
 
-### Private Key Format Sorunu
+### Private Key Format Sorunu (Çözüldü)
 
-**Durum**: INVALID_SIGNATURE hatası alınıyor  
-**Sebep**: Private key ile account ID eşleşmiyor olabilir  
-**Çözüm**: 
-1. Hedera Portal'dan yeni bir test account oluşturun
-2. Veya mevcut account'un private key'ini kontrol edin
-3. Private key formatını doğrulayın (DER veya hex)
+**Durum**: ✅ INVALID_SIGNATURE hatası giderildi  
+**Sebep**: Private key yanlış formatta parse edildiğinde ED25519 olarak algılanıyordu  
+**Çözüm**: `hedera-client.js` anahtar çözümleme mantığı güncellendi. Artık ECDSA/ED25519 tespiti otomatik yapılırken `PUBLIC_KEY_DER` doğrulaması ile doğru anahtar seçiliyor. Ayrıca `.env` dosyasında hem ham anahtar (`MY_PRIVATE_KEY`) hem de DER versiyonu (`PRIVATE_KEY_DER`) saklanıyor.
 
-**Test İçin**:
-- Portal: https://portal.hedera.com
-- Testnet Faucet: https://portal.hedera.com/faucet
+**Doğrulama Adımları**:
+1. `node --input-type=module -e "import { createHcsTopic } from './src/services/hcs-service.js'; createHcsTopic();"` komutuyla test edin.
+2. Konsolda `🔐 Operator anahtar tipi: secp256k1` mesajını görmelisiniz.
+3. HCS Topic ID üretimi başarılıysa `.env` dosyasına yazın (şu anki değer: `0.0.7225007`).
+
+**Ek Kaynaklar**:
+- Hedera Portal: https://portal.hedera.com
+- Hedera HCS Tutorial: https://docs.hedera.com/hedera/tutorials/consensus/submit-your-first-message
+- HCS gRPC API referansı: https://docs.hedera.com/hedera/sdks-and-apis/hedera-consensus-service-api#hedera-consensus-service-grpc-api
 
 ---
 

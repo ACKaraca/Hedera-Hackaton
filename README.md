@@ -163,10 +163,17 @@ Hedera kimlik bilgileri \`backend/.env\` dosyasında saklanır:
 
 \`\`\`env
 MY_ACCOUNT_ID=0.0.7221982
-MY_PRIVATE_KEY=0xe5db195ae1ba131a102416d3a46cbc92c5fbd209d42016bf94e26d41ef1b4f09
+MY_PRIVATE_KEY=e5db195ae1ba131a102416d3a46cbc92c5fbd209d42016bf94e26d41ef1b4f09
+PRIVATE_KEY_DER=3030020100300706052b8104000a04220420e5db195ae1ba131a102416d3a46cbc92c5fbd209d42016bf94e26d41ef1b4f09
+PUBLIC_KEY_DER=302d300706052b8104000a032200028bc6923e231b815e1c47532da4bf71599b78375c471034e0561029f806ab5149
 EVM_ADDRESS=0x969d0569541503653f8551a7a8e0729ae6e2b44c
+HCS_TOPIC_ID=0.0.7225007
+MESH_TOKEN_ID=
 HEDERA_NETWORK=testnet
 \`\`\`
+> **Not**: Backend otomatik olarak private key tipini (ECDSA/ED25519) algılar ve `PUBLIC_KEY_DER` değeriyle eşleştirir.
+> Anahtarları Hedera Portal'dan kopyalarken hem ham hex değerini hem de DER sürümünü sakladığınızdan emin olun.
+> HCS mesaj gönderim adımlarının tamamı için [Submit Your First Message](https://docs.hedera.com/hedera/tutorials/consensus/submit-your-first-message) rehberini inceleyebilirsiniz.
 
 ### Hedera Testnet
 
