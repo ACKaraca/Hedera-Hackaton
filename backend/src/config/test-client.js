@@ -22,8 +22,22 @@ async function testClient() {
     } else {
       logger.success('✅ Bakiye yeterli');
     }
+    
+    // Client'ı kapat
+    client.close();
+    
+    // Test başarıyla tamamlandı, process'i kapat
+    process.exit(0);
   } catch (error) {
     logger.error('❌ Hedera Client testi başarısız', error);
+    
+    // Hata durumunda da client'ı kapat
+    try {
+      client.close();
+    } catch (closeError) {
+      // Client kapatma hatası görmezden gel
+    }
+    
     process.exit(1);
   }
 }
