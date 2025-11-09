@@ -1,10 +1,18 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import http from 'http';
 import { validateEnv } from './config/validate-env.js';
 import { logger } from './utils/logger.js';
 import hcsRoutes from './routes/hcs-routes.js';
 import tokenRoutes from './routes/token-routes.js';
+import hotspotRoutes from './routes/hotspot-routes.js';
+import { generateHotspots } from './utils/mock-data-generator.js';
+import { createHotspot } from './services/hotspot-service.js';
+import { getAllHotspots } from './services/hotspot-service.js';
+import { setHotspots, startProofScheduler } from './services/proof-scheduler.js';
+import { initWebSocket } from './services/websocket-service.js';
+import { startHotspotUpdater } from './services/hotspot-updater.js';
 
 // Hedera client'i import et (başlatma için)
 import client from './config/hedera-client.js';
@@ -34,6 +42,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/hcs', hcsRoutes);
 app.use('/api/token', tokenRoutes);
+app.use('/api/hotspots', hotspotRoutes);
 
 // Temel health check
 app.get('/health', (req, res) => {
@@ -66,7 +75,8 @@ app.get('/', (req, res) => {
       health: '/health',
       status: '/api/v1/status',
       hcs: '/api/hcs',
-      token: '/api/token'
+      token: '/api/token',
+      hotspots: '/api/hotspots'
     },
     documentation: 'https://github.com/ACKaraca/Hedera-Hackaton'
   });
@@ -83,9 +93,32 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message || 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
+// Express app'i http server ile wrap et
+const server = http.createServer(app);
+
+// WebSocket'i başlat
+initWebSocket(server);
+
+server.listen(PORT, () => {
   logger.success(`🚀 Backend sunucusu ${PORT} portunda çalışıyor`);
   logger.info(`📡 Hedera Ağı: ${process.env.HEDERA_NETWORK || 'testnet'}`);
   logger.info(`👤 Operator Account: ${process.env.MY_ACCOUNT_ID}`);
   console.log(`\n📚 API Documentation: http://localhost:${PORT}/`);
+
+  // Server başladığında mock hotspot'lar oluştur
+  const ownerAccountId = process.env.MY_ACCOUNT_ID || '0.0.0';
+  const mockHotspots = generateHotspots(10, ownerAccountId);
+
+  mockHotspots.forEach(hotspot => {
+    createHotspot(hotspot);
+  });
+
+  logger.success(`${mockHotspots.length} simulated hotspots created`);
+
+  // Proof scheduler'ı başlat
+  setHotspots(getAllHotspots());
+  startProofScheduler();
+
+  // Hotspot istatistik güncelleyiciyi başlat
+  startHotspotUpdater();
 });
