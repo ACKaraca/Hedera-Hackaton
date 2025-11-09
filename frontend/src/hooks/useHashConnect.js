@@ -16,6 +16,20 @@ export const useHashConnect = () => {
 
   useEffect(() => {
     // Initialize HashConnect
+    const pairingHandler = (data) => {
+      if (data.accountIds && data.accountIds.length > 0) {
+        setAccountId(data.accountIds[0]);
+        setIsConnected(true);
+        localStorage.setItem('hashconnect_pairing', JSON.stringify(data));
+      }
+    };
+
+    const disconnectionHandler = () => {
+      setAccountId(null);
+      setIsConnected(false);
+      localStorage.removeItem('hashconnect_pairing');
+    };
+
     const initHashConnect = async () => {
       try {
         if (!hc) {
@@ -36,21 +50,10 @@ export const useHashConnect = () => {
         }
 
         // Listen for pairing events
-        hc.pairingEvent.on((data) => {
-          if (data.accountIds && data.accountIds.length > 0) {
-            setAccountId(data.accountIds[0]);
-            setIsConnected(true);
-            // Save pairing data to localStorage
-            localStorage.setItem('hashconnect_pairing', JSON.stringify(data));
-          }
-        });
+        hc.pairingEvent.on(pairingHandler);
 
         // Listen for disconnect events
-        hc.disconnectionEvent.on(() => {
-          setAccountId(null);
-          setIsConnected(false);
-          localStorage.removeItem('hashconnect_pairing');
-        });
+        hc.disconnectionEvent.on(disconnectionHandler);
 
         // Check if already paired
         if (hc.pairingData) {
@@ -66,14 +69,20 @@ export const useHashConnect = () => {
     };
 
     initHashConnect();
+
+    // Cleanup function to remove event listeners
+    return () => {
+      if (hc) {
+        hc.pairingEvent.off(pairingHandler);
+        hc.disconnectionEvent.off(disconnectionHandler);
+      }
+    };
   }, []);
 
   const connectWallet = async () => {
     try {
-      if (!hc) {
-        hc = new HashConnect();
-        await hc.init(appMetadata, "testnet", false);
-        setIsInitialized(true);
+      if (!hc || !isInitialized) {
+        throw new Error('HashConnect is not initialized yet');
       }
       await hc.connectToLocalWallet();
     } catch (error) {

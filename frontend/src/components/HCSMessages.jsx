@@ -59,8 +59,8 @@ export const HCSMessages = () => {
           };
         });
 
-        // Reverse to show newest first
-        setMessages(processedMessages.reverse());
+        // Messages are already in descending order (newest first)
+        setMessages(processedMessages);
       } catch (err) {
         console.error('Error fetching HCS messages:', err);
         setError('HCS mesajları yüklenemedi. Topic ID\'yi kontrol edin.');
@@ -79,8 +79,9 @@ export const HCSMessages = () => {
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return 'Bilinmiyor';
     try {
-      // Hedera timestamps are in nanoseconds, convert to milliseconds
-      const timestampMs = parseInt(timestamp) / 1000000;
+      // Hedera timestamps are in seconds.nanoseconds format
+      const [seconds, nanos] = timestamp.split('.');
+      const timestampMs = (parseInt(seconds, 10) * 1000) + Math.round(parseInt(nanos, 10) / 1000000);
       return new Date(timestampMs).toLocaleString('tr-TR');
     } catch (e) {
       return timestamp;

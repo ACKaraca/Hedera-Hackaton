@@ -240,7 +240,7 @@ export const ProviderPanel = () => {
                   <p><strong>Konum:</strong> {hotspot.latitude?.toFixed(4)}, {hotspot.longitude?.toFixed(4)}</p>
                   <p><strong>Kazanç:</strong> {(hotspot.earnings || 0).toFixed(2)} $MESH</p>
                   {hotspot.bandwidthShared && (
-                    <p><strong>Paylaşılan Bant:</strong> {Math.round(hotspot.bandwidthShared / 1024)} GB</p>
+                    <p><strong>Paylaşılan Bant:</strong> {(hotspot.bandwidthShared / (1024 ** 3)).toFixed(2)} GB</p>
                   )}
                 </div>
               </div>

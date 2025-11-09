@@ -72,9 +72,6 @@ export const UserPanel = () => {
         // Fetch token balance if wallet is connected
         if (isConnected && accountId) {
           try {
-            const balanceRes = await axios.get(
-              `${MIRROR_NODE_URL}/api/v1/accounts/${accountId}/tokens`
-            );
             // Find MESH token balance (assuming token ID is known)
             // For now, we'll show account balance
             const accountRes = await axios.get(
@@ -159,7 +156,7 @@ export const UserPanel = () => {
                     <p><strong>Mesafe:</strong> {hotspot.distance.toFixed(2)} km</p>
                   )}
                   {hotspot.bandwidthShared && (
-                    <p><strong>Paylaşılan Bant:</strong> {Math.round(hotspot.bandwidthShared / 1024)} GB</p>
+                    <p><strong>Paylaşılan Bant:</strong> {(hotspot.bandwidthShared / (1024 ** 3)).toFixed(2)} GB</p>
                   )}
                 </div>
               </div>

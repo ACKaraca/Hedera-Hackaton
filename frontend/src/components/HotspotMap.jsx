@@ -8,11 +8,13 @@ import './HotspotMap.css';
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 // Fix for default marker icons in react-leaflet
-delete Icon.Default.prototype._getIconUrl;
+if (Icon.Default.prototype._getIconUrl) {
+  delete Icon.Default.prototype._getIconUrl;
+}
 Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+  iconUrl: '/leaflet/marker-icon.png',
+  shadowUrl: '/leaflet/marker-shadow.png',
 });
 
 export const HotspotMap = () => {
@@ -62,6 +64,18 @@ export const HotspotMap = () => {
 
   const getMarkerColor = (status) => {
     return status === 'ACTIVE' ? 'green' : 'gray';
+  };
+
+  const getMarkerIcon = (status) => {
+    const color = getMarkerColor(status);
+    return new Icon({
+      iconUrl: `/leaflet/marker-icon-${color}.png`,
+      shadowUrl: '/leaflet/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
   };
 
   const center = hotspots.length > 0 
@@ -119,14 +133,7 @@ export const HotspotMap = () => {
             <Marker
               key={hotspot.id}
               position={[hotspot.latitude || 0, hotspot.longitude || 0]}
-              icon={new Icon({
-                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${getMarkerColor(hotspot.status)}.png`,
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-              })}
+              icon={getMarkerIcon(hotspot.status)}
             >
               <Popup>
                 <div className="popup-content">

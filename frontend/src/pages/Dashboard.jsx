@@ -37,7 +37,7 @@ export const Dashboard = () => {
           totalHotspots,
           activeHotspots,
           totalUptime: Math.round(totalUptime / 3600), // Convert to hours
-          totalBandwidth: Math.round(totalBandwidth / 1024), // Convert to GB
+          totalBandwidth: (totalBandwidth / (1024 ** 3)).toFixed(2), // Convert to GB
           activeUsers
         });
         setError(null);

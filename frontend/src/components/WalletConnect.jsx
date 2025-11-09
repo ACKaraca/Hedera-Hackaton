@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHashConnect } from '../hooks/useHashConnect';
 import './WalletConnect.css';
 
 export const WalletConnect = () => {
   const { accountId, isConnected, connectWallet, disconnectWallet } = useHashConnect();
+  const [error, setError] = useState(null);
 
   const handleConnect = async () => {
     try {
+      setError(null);
       await connectWallet();
     } catch (error) {
-      alert('Cüzdan bağlantısı başarısız. Lütfen HashPack cüzdanınızın açık olduğundan emin olun.');
+      setError('Cüzdan bağlantısı başarısız. Lütfen HashPack cüzdanınızın açık olduğundan emin olun.');
+      // Auto-clear error after 5 seconds
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -24,6 +28,12 @@ export const WalletConnect = () => {
 
   return (
     <div className="wallet-connect">
+      {error && (
+        <div className="error-toast">
+          <span className="error-icon">⚠️</span>
+          <span className="error-message">{error}</span>
+        </div>
+      )}
       {isConnected && accountId ? (
         <div className="wallet-connected">
           <span className="wallet-status">●</span>
